@@ -7,15 +7,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-@Entity
 @Data
-public class User {
+@Entity
+public class Review {
     @Id
     @GeneratedValue
+    private Integer reviewId;
+    private String desc;
+    private Integer likes=0;
+    private Integer dislikes=0;
     private UUID userId;
-    private String name;
-    private String lastName;
-    private String email;
-    private Double rate;
-    private Integer employeeId;
+    
 }
