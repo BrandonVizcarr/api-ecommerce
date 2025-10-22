@@ -10,7 +10,7 @@ import jakarta.persistence.PreUpdate;
 import lombok.Data;
 
 @Data
-@Entity
+@Entity(name = "sellers")
 public class Seller {
     @Id
     @GeneratedValue
