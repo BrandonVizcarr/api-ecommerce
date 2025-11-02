@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.api_ecommerce.dto.request.ProductRequestDTO;
 import com.api_ecommerce.dto.response.ApiResponseDTO;
 import com.api_ecommerce.services.ProductService;
@@ -55,4 +54,11 @@ public class ProductController {
     public ResponseEntity<ApiResponseDTO> updateProduct(@PathVariable("productId") UUID productId,@RequestBody ProductRequestDTO productRequestDTO){
         return ResponseEntity.ok(new ApiResponseDTO(productService.updateProduct(productId,productRequestDTO),HttpStatus.OK));
     }
+
+    @GetMapping("{productId}/reviews")
+    public ResponseEntity<ApiResponseDTO> getProductReviews(@PathVariable("productId") UUID productId,@RequestParam(defaultValue = "0") @Min(0) int page,@RequestParam(defaultValue = "10") @Min(1) @Max(100) int size){
+        return ResponseEntity.ok(new ApiResponseDTO(productService.getReviwsByProductId(productId, page, size),HttpStatus.OK));
+    }
+    
 }
+
