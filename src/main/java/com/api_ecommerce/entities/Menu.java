@@ -12,7 +12,7 @@ public class Menu {
     @Id
     @Column(name = "id")
     private Integer idMenu;
-    @Column(name = "name")
+    @Column(name = "menu_name")
     private String name;
     @Column(name = "url")
     private String urlMenu;

@@ -16,7 +16,7 @@ public class Review {
     @GeneratedValue
     @Column(name = "review_id")
     private Long reviewId;
-    @Column(name = "desc")
+    @Column(name = "description")
     private String desc;
     @Column(name = "likes")
     private Integer likes=0;

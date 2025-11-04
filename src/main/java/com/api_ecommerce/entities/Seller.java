@@ -2,9 +2,12 @@ package com.api_ecommerce.entities;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.validator.constraints.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -14,12 +17,12 @@ import lombok.Data;
 @Entity(name = "sellers")
 public class Seller {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seller_id")
     private Integer sellerId;
-    @Column(name = "name")
+    @Column(name = "seller_name")
     private String name;
-    @Column(name = "desc")
+    @Column(name = "description")
     private String desc;
     @Column(name = "country_id")
     private Integer countryId;
@@ -35,6 +38,8 @@ public class Seller {
     private Integer soldItems;
     @Column(name = "verified")
     private Boolean verified;
+    @Column(name = "user_Id")
+    private UUID userId;
     @Column(name = "profile_img")
     private String profileImg;
     @PrePersist

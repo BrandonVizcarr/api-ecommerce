@@ -23,9 +23,9 @@ public class Product {
     @GeneratedValue
     @Column(name = "product_id")
     private UUID productId;
-    @Column(name = "name")
+    @Column(name = "product_name")
     private String name;
-    @Column(name = "desc")
+    @Column(name = "description")
     private String description;
     @Column(name = "rate")
     private Double rate;
@@ -50,7 +50,7 @@ public class Product {
     @Column(name = "seller_id")
     private Integer sellerId;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "sellerId", nullable = false, updatable = false, insertable = false) 
+    @JoinColumn(name = "seller_Id", nullable = false, updatable = false, insertable = false) 
     private Seller seller;
 
     @PrePersist
