@@ -13,6 +13,8 @@ import com.api_ecommerce.entities.User;
 import com.api_ecommerce.repositories.UserRepository;
 import com.api_ecommerce.services.UserService;
 
+import jakarta.persistence.EntityExistsException;
+
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -26,7 +28,7 @@ public class UserServiceImpl implements UserService{
     public UserResponseDTO saveUser(UserRequestDTO userRequestDTO) {
         Optional<User> existingUser = userRepository.findByEmail(userRequestDTO.getEmail());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("User with this email already exists");
+            throw new EntityExistsException("User with this email already exists");
         }
 
         User user = modelMapper.map(userRequestDTO, User.class);

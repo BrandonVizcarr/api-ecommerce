@@ -9,7 +9,6 @@ public class UserResponseDTO {
     private String name;
     private String lastName;
     private String email;
-    private String password;
     private Double rate;
     private Integer role;
     private String profileImg;

@@ -2,7 +2,6 @@ package com.api_ecommerce.services.implementation;
 
 import java.util.UUID;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +16,16 @@ import com.api_ecommerce.repositories.ReviewRepository;
 import com.api_ecommerce.services.ProductService;
 import com.api_ecommerce.specifications.ProductSpecification;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
 
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private ReviewRepository reviewRepository;
-
+    private final ProductRepository productRepository;
+    private final ReviewRepository reviewRepository;
     private ModelMapper modelMapper = new ModelMapper();
 
     @Override
@@ -36,37 +37,31 @@ public class ProductServiceImpl implements ProductService{
             int size,
             String sortBy,
             String direction) {
-        try {
-            Specification<Product> spec = Specification.allOf(ProductSpecification.hasNameOrDescriptionLike(query))
+        Specification<Product> spec = Specification.allOf(ProductSpecification.hasNameOrDescriptionLike(query))
                 .and(ProductSpecification.priceBetween(minPrice, maxPrice))
                 .and(ProductSpecification.hasCategory(categoryId));
-            Sort sort = direction.equalsIgnoreCase("desc")
-                    ? Sort.by(sortBy).descending()
-                    : Sort.by(sortBy).ascending();
-            Pageable pageable = PageRequest.of(page, size, sort);
-            return productRepository.findAll(spec,pageable);
-        } catch (Exception e) {
-            throw e;
-        }
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productRepository.findAll(spec, pageable);
     }
 
     @Override
     public Product getProductById(UUID productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+                .orElseThrow(() -> new EntityNotFoundException("Product not found: " + productId));
     }
 
     @Override
+    @Transactional
     public Boolean saveProduct(ProductRequestDTO productRequestDTO) {
-        try {
-            Product product = modelMapper.map(productRequestDTO, Product.class);
-            return productRepository.save(product).getProductId() != null;
-        } catch (Exception e) {
-            throw e;
-        }
+        Product product = modelMapper.map(productRequestDTO, Product.class);
+        return productRepository.save(product).getProductId() != null;
     }
 
     @Override
+    @Transactional
     public Boolean updateProduct(UUID productId, ProductRequestDTO productRequestDTO) {
         return productRepository.findById(productId)
                 .map(existing -> {
@@ -74,17 +69,13 @@ public class ProductServiceImpl implements ProductService{
                     updated.setProductId(productId);
                     return productRepository.save(updated).getUpdatedAt() != existing.getUpdatedAt();
                 })
-                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+                .orElseThrow(() -> new EntityNotFoundException("Product not found: " + productId));
     }
 
     @Override
     public Page<Review> getReviwsByProductId(UUID prodcutId, int page, int size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by("likes"));
-            return reviewRepository.findByProductId(prodcutId,pageable);
-        } catch (Exception e) {
-            throw e;
-        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("likes"));
+        return reviewRepository.findByProductId(prodcutId,pageable);
     }
 
 }

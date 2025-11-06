@@ -1,15 +1,15 @@
 package com.api_ecommerce.dto.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class UserRequestDTO {
 
-    @Email(message = "Email must be valid")
     @NotBlank(message = "Email is required")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email must be valid")
     private String email;
 
     @NotBlank(message = "Password cannot be empty")
