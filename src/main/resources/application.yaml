@@ -5,10 +5,10 @@ server:
 
 spring:
   datasource:
-    url: ${ DATASOURCE }
+    url: ${DATASOURCE_URL}
     driver-class-name: org.postgresql.Driver
-    username: ${ USERNAME }
-    password: ${ PASSWORD }
+    username: ${DATASOURCE_USER}
+    password: ${DATASOURCE_PASS}
   jpa:
     hibernate:
       ddl-auto: none
