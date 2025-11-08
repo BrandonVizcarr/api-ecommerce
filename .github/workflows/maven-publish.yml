@@ -23,35 +23,34 @@ jobs:
       - name: 🏗️ Build JAR
         run: mvn clean package -DskipTests
 
-      - name: 🔑 Connect to VPS & Deploy
+      - name: 🔑 Preparar VPS para despliegue
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_SERVER }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY}}
+          username: root
+          key: ${{ secrets.DEPLOY_KEY }}
           script: |
-            echo "📦 Desplegando proyecto en VPS..."
-            mkdir -p /home/${{ secrets.DEPLOY_USER }}/proyectos/api-ecommerce
-            pkill -f 'mi-proyecto-0.0.1-SNAPSHOT.jar' || true
-            rm -f /home/${{ secrets.DEPLOY_USER }}/proyectos/api-ecommerce/*.jar
-            exit
+            echo "📦 Preparando directorios..."
+            mkdir -p /root/proyectos/api-ecommerce/logs
+            pkill -f 'api-ecommerce-0.0.1-SNAPSHOT.jar' || true
+            rm -f /root/proyectos/api-ecommerce/*.jar
 
-      - name: 📤 Upload JAR to VPS
+      - name: 📤 Subir JAR al VPS
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.DEPLOY_SERVER }}
-          username: ${{ secrets.DEPLOY_USER }}
+          username: root
           key: ${{ secrets.DEPLOY_KEY }}
-          source: "target/mi-proyecto-0.0.1-SNAPSHOT.jar"
-          target: "/home/${{ secrets.DEPLOY_USER }}/proyectos/mi-proyecto/"
+          source: "target/api-ecommerce-0.0.1-SNAPSHOT.jar"
+          target: "/root/proyectos/api-ecommerce/"
 
-      - name: 🚀 Run service on VPS
+      - name: 🚀 Ejecutar aplicación en VPS
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_SERVER }}
-          username: ${{ secrets.DEPLOY_USER }}
+          username: root
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
-            cd /home/${{ secrets.DEPLOY_USER }}/proyectos/mi-proyecto
-            nohup java -jar mi-proyecto-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
-            echo "✅ Aplicación ejecutándose"
+            echo "🚀 Iniciando aplicación..."
+            nohup java -jar /root/proyectos/api-ecommerce/api-ecommerce-0.0.1-SNAPSHOT.jar > /root/proyectos/api-ecommerce/logs/app.log 2>&1 &
+            echo "✅ Aplicación ejecutándose correctamente"
