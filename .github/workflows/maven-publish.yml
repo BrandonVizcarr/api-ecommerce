@@ -23,19 +23,20 @@ jobs:
       - name: 🏗️ Build JAR
         run: mvn clean package -DskipTests
 
-      - name: 🔑 Preparar VPS para despliegue
+      - name: 🗂️ Crear estructura en VPS
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_SERVER }}
           username: root
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
-            echo "📦 Preparando directorios..."
+            echo "📁 Creando estructura de directorios..."
             mkdir -p /root/proyectos/api-ecommerce/logs
+            echo "🧹 Limpiando JAR anterior..."
             pkill -f 'api-ecommerce-0.0.1-SNAPSHOT.jar' || true
             rm -f /root/proyectos/api-ecommerce/*.jar
 
-      - name: 📤 Subir JAR al VPS
+      - name: 📤 Subir nuevo JAR al VPS
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.DEPLOY_SERVER }}
@@ -44,7 +45,7 @@ jobs:
           source: "target/api-ecommerce-0.0.1-SNAPSHOT.jar"
           target: "/root/proyectos/api-ecommerce/"
 
-      - name: 🚀 Ejecutar aplicación en VPS
+      - name: 🚀 Ejecutar servicio en VPS
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_SERVER }}
@@ -52,5 +53,6 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             echo "🚀 Iniciando aplicación..."
+            cd /root/proyectos/api-ecommerce
             nohup java -jar /root/proyectos/api-ecommerce/api-ecommerce-0.0.1-SNAPSHOT.jar > /root/proyectos/api-ecommerce/logs/app.log 2>&1 &
-            echo "✅ Aplicación ejecutándose correctamente"
+            echo "✅ Aplicación desplegada y ejecutándose correctamente."
