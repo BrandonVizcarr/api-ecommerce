@@ -1,4 +1,4 @@
-name: 🚀 CI/CD - Deploy Java Service to VPS
+name: 🚀 CI/CD - Deploy Java Service to VPS (Secure)
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
       - name: 📦 Checkout code
         uses: actions/checkout@v4
 
-      - name: ☕ Set up JDK
+      - name: ☕ Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
@@ -23,36 +23,36 @@ jobs:
       - name: 🏗️ Build JAR
         run: mvn clean package -DskipTests
 
-      - name: 🗂️ Crear estructura en VPS
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.DEPLOY_SERVER }}
-          username: root
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            echo "📁 Creando estructura de directorios..."
-            mkdir -p /root/proyectos/api-ecommerce/logs
-            echo "🧹 Limpiando JAR anterior..."
-            pkill -f 'api-ecommerce-0.0.1-SNAPSHOT.jar' || true
-            rm -f /root/proyectos/api-ecommerce/*.jar
+      - name: 🔍 List JAR (debug)
+        run: ls -lh target/
 
-      - name: 📤 Subir nuevo JAR al VPS
-        uses: appleboy/scp-action@v0.1.5
-        with:
-          host: ${{ secrets.DEPLOY_SERVER }}
-          username: root
-          key: ${{ secrets.DEPLOY_KEY }}
-          source: "target/api-ecommerce-0.0.1-SNAPSHOT.jar"
-          target: "/root/proyectos/api-ecommerce/"
+      - name: 🔑 Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.DEPLOY_SERVER }} >> ~/.ssh/known_hosts
 
-      - name: 🚀 Ejecutar servicio en VPS
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.DEPLOY_SERVER }}
-          username: root
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            echo "🚀 Iniciando aplicación..."
-            cd /root/proyectos/api-ecommerce
-            nohup java -jar /root/proyectos/api-ecommerce/api-ecommerce-0.0.1-SNAPSHOT.jar > /root/proyectos/api-ecommerce/logs/app.log 2>&1 &
-            echo "✅ Aplicación desplegada y ejecutándose correctamente."
+      - name: 📤 Upload JAR to VPS (scp)
+        run: |
+          echo "📤 Subiendo JAR a VPS..."
+          scp -i ~/.ssh/id_ed25519 target/*.jar root@${{ secrets.DEPLOY_SERVER }}:/root/proyectos/api-ecommerce/
+          echo "✅ JAR subido correctamente."
+
+      - name: 🚀 Deploy on VPS (ssh)
+        run: |
+          echo "🚀 Desplegando aplicación en VPS..."
+          ssh -i ~/.ssh/id_ed25519 root@${{ secrets.DEPLOY_SERVER }} << 'EOF'
+            set -e
+            echo "🛑 Deteniendo instancias previas..."
+            pkill -f 'api-ecommerce' || true
+
+            echo "📂 Navegando a carpeta del proyecto..."
+            cd /root/proyectos/api-ecommerce || exit 1
+
+            echo "🚀 Ejecutando nueva versión..."
+            jar_name=$(ls *.jar | head -n 1)
+            nohup java -jar "$jar_name" > logs/app.log 2>&1 &
+
+            echo "✅ Despliegue completado correctamente."
+          EOF
