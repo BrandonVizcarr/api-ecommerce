@@ -1,15 +1,20 @@
 package com.api_ecommerce.dto.response;
 
 import java.util.UUID;
-import lombok.Data;
 
-@Data
-public class UserResponseDTO {
-    private UUID userId;
-    private String name;
-    private String lastName;
-    private String email;
-    private Double rate;
-    private Integer role;
-    private String profileImg;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record UserResponseDTO(
+    UUID userId,
+    String name,
+    String lastName,
+    String email,
+    Double rate,
+    Integer role,
+    String profileImg
+) {
+    @JsonProperty("fullName")
+    public String fullName(){
+        return name + ' ' + lastName;
+    }
 }
