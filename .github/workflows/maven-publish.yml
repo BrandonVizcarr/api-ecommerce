@@ -11,56 +11,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 🧾 1. Descargar código fuente
       - name: 📦 Checkout code
         uses: actions/checkout@v4
 
+      # ☕ 2. Instalar JDK
       - name: ☕ Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 🏗️ Build project
+      # 🏗️ 3. Construir el .jar
+      - name: 🏗️ Build JAR
         run: mvn clean package -DskipTests
 
-      - name: 🧾 Check target contents
-        run: ls -lh target/
+      # 📤 4. Subir el JAR a la VPS
+      - name: 📤 Upload JAR to VPS
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.DEPLOY_SERVER }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          source: "target/api-ecommerce-0.0.1-SNAPSHOT.jar"
+          target: "/root/proyectos/api-ecommerce/"
 
-      - name: 🔐 Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.DEPLOY_SERVER }} >> ~/.ssh/known_hosts
-
-      - name: 📤 Upload JAR via rsync
-        run: |
-          echo "📤 Subiendo build al VPS..."
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
-            target/api-ecommerce-0.0.1-SNAPSHOT.jar \
-            root@${{ secrets.DEPLOY_SERVER }}:/root/proyectos/api-ecommerce/
-
+      # 🚀 5. Reiniciar servicio y pasar variables
       - name: 🚀 Restart and run service on VPS
-        env:
-          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
-          DATASOURCE_USER: ${{ secrets.DATASOURCE_USER }}
-          DATASOURCE_PASS: ${{ secrets.DATASOURCE_PASS }}
         run: |
           echo "🚀 Desplegando y ejecutando aplicación en VPS..."
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@${{ secrets.DEPLOY_SERVER }} << 'EOF'
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@${{ secrets.DEPLOY_SERVER }} << EOF
           set -e
           cd /root/proyectos/api-ecommerce
           mkdir -p logs
           echo "🛑 Deteniendo instancias previas..."
           pkill -f 'api-ecommerce' || true
           echo "🚀 Iniciando nueva versión..."
-      
-          export DATASOURCE_URL=${DATASOURCE_URL}
-          export DATASOURCE_USER=${DATASOURCE_USER}
-          export DATASOURCE_PASS=${DATASOURCE_PASS}
-      
-          nohup java -jar api-ecommerce-0.0.1-SNAPSHOT.jar > logs/app.log 2>&1 &
-          sleep 3
+
+          nohup java -jar \
+            -DDATASOURCE_URL='${{ secrets.DATASOURCE_URL }}' \
+            -DDATASOURCE_USER='${{ secrets.DATASOURCE_USER }}' \
+            -DDATASOURCE_PASS='${{ secrets.DATASOURCE_PASS }}' \
+            api-ecommerce-0.0.1-SNAPSHOT.jar > logs/app.log 2>&1 &
+
+          sleep 5
           ps aux | grep java
           echo "✅ Aplicación desplegada correctamente."
           EOF
