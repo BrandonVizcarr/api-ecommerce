@@ -1,4 +1,4 @@
-name: 🚀 CI/CD - Deploy Java Service to VPS (Secure)
+name: 🚀 CI/CD - Deploy Java Service to VPS
 
 on:
   push:
@@ -14,45 +14,44 @@ jobs:
       - name: 📦 Checkout code
         uses: actions/checkout@v4
 
-      - name: ☕ Set up JDK 17
+      - name: ☕ Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 🏗️ Build JAR
+      - name: 🏗️ Build project
         run: mvn clean package -DskipTests
 
-      - name: 🔍 List JAR (debug)
+      - name: 🧾 Check target contents
         run: ls -lh target/
 
-      - name: 🔑 Setup SSH key
+      - name: 🔐 Configure SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.DEPLOY_SERVER }} >> ~/.ssh/known_hosts
 
-      - name: 📤 Upload JAR to VPS (scp)
+      - name: 📤 Upload JAR via rsync
         run: |
-          echo "📤 Subiendo JAR a VPS..."
-          scp -i ~/.ssh/id_ed25519 target/*.jar root@${{ secrets.DEPLOY_SERVER }}:/root/proyectos/api-ecommerce/
-          echo "✅ JAR subido correctamente."
+          echo "📤 Subiendo build al VPS..."
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+            target/api-ecommerce-0.0.1-SNAPSHOT.jar \
+            root@${{ secrets.DEPLOY_SERVER }}:/root/proyectos/api-ecommerce/
 
-      - name: 🚀 Deploy on VPS (ssh)
+      - name: 🚀 Restart and run service on VPS
         run: |
-          echo "🚀 Desplegando aplicación en VPS..."
-          ssh -i ~/.ssh/id_ed25519 root@${{ secrets.DEPLOY_SERVER }} << 'EOF'
-            set -e
-            echo "🛑 Deteniendo instancias previas..."
-            pkill -f 'api-ecommerce' || true
-
-            echo "📂 Navegando a carpeta del proyecto..."
-            cd /root/proyectos/api-ecommerce || exit 1
-
-            echo "🚀 Ejecutando nueva versión..."
-            jar_name=$(ls *.jar | head -n 1)
-            nohup java -jar "$jar_name" > logs/app.log 2>&1 &
-
-            echo "✅ Despliegue completado correctamente."
+          echo "🚀 Desplegando y ejecutando aplicación en VPS..."
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@${{ secrets.DEPLOY_SERVER }} << 'EOF'
+          set -e
+          cd /root/proyectos/api-ecommerce
+          mkdir -p logs
+          echo "🛑 Deteniendo instancias previas..."
+          pkill -f 'api-ecommerce' || true
+          echo "🚀 Iniciando nueva versión..."
+          nohup java -jar api-ecommerce-0.0.1-SNAPSHOT.jar > logs/app.log 2>&1 &
+          sleep 3
+          ps aux | grep java
+          echo "✅ Aplicación desplegada correctamente."
           EOF
