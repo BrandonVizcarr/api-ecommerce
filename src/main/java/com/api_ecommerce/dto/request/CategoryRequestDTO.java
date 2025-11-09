@@ -11,7 +11,7 @@ public class CategoryRequestDTO {
     @NotEmpty
     @NotBlank
     @Size(min = 4, message = "Name must be at least 4 characters long")
-    private String nombre;
+    private String name;
     private Integer order=1;
     private Integer parentId;
     private Integer categoryId;
