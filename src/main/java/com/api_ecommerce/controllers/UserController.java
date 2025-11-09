@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.api_ecommerce.dto.request.UserRequestDTO;
 import com.api_ecommerce.dto.response.ApiResponseDTO;
 import com.api_ecommerce.services.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,9 +30,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDTO(userService.saveUser(userRequestDTO),HttpStatus.CREATED));
     }
 
-    @GetMapping("{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<ApiResponseDTO> getUserById(@PathVariable("userId") UUID userId){
         return ResponseEntity.ok(new ApiResponseDTO(userService.getUserById(userId),HttpStatus.OK));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponseDTO> getUsers(@RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size){
+        return ResponseEntity.ok(new ApiResponseDTO(userService.getUsers(page, size),HttpStatus.OK));
     }
 
 }

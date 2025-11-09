@@ -4,6 +4,9 @@ import java.util.Optional;
 import java.util.UUID;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.api_ecommerce.dto.request.UserRequestDTO;
@@ -41,6 +44,14 @@ public class UserServiceImpl implements UserService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: "+userId));
         return modelMapper.map(user, UserResponseDTO.class);
+    }
+
+    @Override
+    public Page<UserResponseDTO> getUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> usersPage = userRepository.findAll(pageable);
+        Page<UserResponseDTO> dtoPage = usersPage.map(user -> modelMapper.map(user, UserResponseDTO.class));
+        return dtoPage;
     }
 
 }

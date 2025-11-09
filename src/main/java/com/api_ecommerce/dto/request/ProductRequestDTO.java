@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class ProductRequestDTO {
     private UUID productId;
-    @Size(min = 6, message = "Name must be at least 4 characters long")
+    @Size(min = 4, message = "Name must be at least 4 characters long")
     @NotBlank(message = "Name is required")
     private String name;
     private String description;

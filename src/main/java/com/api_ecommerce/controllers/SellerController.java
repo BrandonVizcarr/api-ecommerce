@@ -27,7 +27,7 @@ public class SellerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDTO(sellerService.saveSeller(sellerRequestDTO),HttpStatus.CREATED));
     }
 
-    @GetMapping("{sellerId}")
+    @GetMapping("/{sellerId}")
     public ResponseEntity<ApiResponseDTO> getSellerById(@PathVariable("sellerId") Integer sellerId){
         return ResponseEntity.ok(new ApiResponseDTO(sellerService.getSellerById(sellerId),HttpStatus.OK));
     }

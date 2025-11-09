@@ -42,7 +42,7 @@ public class Product {
     @Column(name = "media")
     private List<String> media;
     @Column(name = "canceled")
-    private Boolean canceled;
+    private Boolean canceled = false;
     @Column(name = "cantegory_id")
     private Integer categoryId;
     @Column(name = "subcategory_id")
