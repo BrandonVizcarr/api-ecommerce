@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.api_ecommerce.dto.request.ProductRequestDTO;
 import com.api_ecommerce.dto.response.ApiResponseDTO;
 import com.api_ecommerce.services.ProductService;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
