@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public List<Category> getCategories() {
-        return categoryRepository.findAllByCanceled(false);
+        return categoryRepository.findAllParentCategoriesWithSubCategories();
     }
 
     @Override
