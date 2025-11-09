@@ -20,7 +20,7 @@ public class Category {
     private Integer categoryId;
     @Column(name = "category_name")
     private String name;
-    @Column(name = "order")
+    @Column(name = "order_cat")
     private Integer order;
     @Column(name = "canceled")
     private Boolean canceled = false;
