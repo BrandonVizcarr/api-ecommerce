@@ -23,9 +23,9 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public Category saveCategory(CategoryRequestDTO categoryRequestDTO) {
-        categoryRepository.findByName(categoryRequestDTO.getNombre()).ifPresent(
+        categoryRepository.findByName(categoryRequestDTO.getName()).ifPresent(
                 category -> {
-                    if (category.getName().equalsIgnoreCase(categoryRequestDTO.getNombre())) {
+                    if (category.getName().equalsIgnoreCase(categoryRequestDTO.getName())) {
                         throw new EntityExistsException("Category with this name already exists");
                     }
                 });
