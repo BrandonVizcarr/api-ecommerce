@@ -14,6 +14,7 @@ import com.api_ecommerce.dto.request.CategoryRequestDTO;
 import com.api_ecommerce.dto.response.ApiResponseDTO;
 import com.api_ecommerce.services.CategoryService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,7 +30,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponseDTO> saveCategory(@RequestBody CategoryRequestDTO categoryRequestDTO) {
+    public ResponseEntity<ApiResponseDTO> saveCategory(@Valid @RequestBody CategoryRequestDTO categoryRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponseDTO(categoryService.saveCategory(categoryRequestDTO), HttpStatus.CREATED));
     }
