@@ -61,7 +61,7 @@ public class SellerServiceImpl implements SellerService {
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return sellerRepository.findAll(null, pageable);
+        return sellerRepository.findAll(pageable);
     }
 
     @Override
