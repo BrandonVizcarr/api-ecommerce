@@ -11,7 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.Data;
 
@@ -23,22 +22,24 @@ public class Product {
     @GeneratedValue
     @Column(name = "product_id")
     private UUID productId;
-    @Column(name = "product_name")
+    @Column(name = "product_name", nullable = false)
     private String name;
     @Column(name = "description")
     private String description;
     @Column(name = "rate")
     private Double rate;
-    @Column(name = "price")
+    @Column(name = "rate_count")
+    private Integer rateCount;
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
     @Column(name = "discount")
     private BigDecimal discount;
-    @Column(name = "stock")
+    @Column(name = "stock", nullable = false)
     private Integer stock;
     @Column(name = "created")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
     @Column(name = "updated")
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
     @Column(name = "media")
     private List<String> media;
     @Column(name = "canceled")
@@ -47,17 +48,13 @@ public class Product {
     private Integer categoryId;
     @Column(name = "subcategory_id")
     private Integer subCategoryId;
-    @Column(name = "seller_id")
+    @Column(name = "seller_id", nullable = false)
     private Integer sellerId;
+    @Column(name = "brand_id")
+    private Integer brandId;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "seller_Id", nullable = false, updatable = false, insertable = false) 
     private Seller seller;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
 
     @PreUpdate
     protected void onUpdate() {

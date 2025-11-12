@@ -24,8 +24,6 @@ public class User {
     private String email;
     @Column(name = "pass")
     private String password;
-    @Column(name = "rate")
-    private Double rate;
     @Column(name = "rol_id")
     private Integer role=1;
     @Column(name = "profile_img")

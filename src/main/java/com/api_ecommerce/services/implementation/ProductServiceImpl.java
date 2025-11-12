@@ -65,9 +65,9 @@ public class ProductServiceImpl implements ProductService{
     public Boolean updateProduct(UUID productId, ProductRequestDTO productRequestDTO) {
         return productRepository.findById(productId)
                 .map(existing -> {
-                    Product updated = modelMapper.map(productRequestDTO, Product.class);
-                    updated.setProductId(productId);
-                    return productRepository.save(updated).getUpdatedAt() != existing.getUpdatedAt();
+                    modelMapper.map(productRequestDTO, existing);
+                    productRepository.save(existing);
+                return true;
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Product not found: " + productId));
     }

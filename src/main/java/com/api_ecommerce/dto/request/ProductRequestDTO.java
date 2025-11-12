@@ -26,4 +26,5 @@ public class ProductRequestDTO {
     private Integer subCategoryId;
     @NotNull(message = "Seller is required")
     private Integer sellerId;
+    private Double rate;
 }

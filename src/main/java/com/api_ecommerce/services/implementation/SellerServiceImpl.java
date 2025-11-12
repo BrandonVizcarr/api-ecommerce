@@ -2,6 +2,10 @@ package com.api_ecommerce.services.implementation;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.api_ecommerce.dto.request.SellerRequestDTO;
 import com.api_ecommerce.entities.Seller;
@@ -14,7 +18,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
-public class SellerServiceImpl implements SellerService{
+public class SellerServiceImpl implements SellerService {
 
     @Autowired
     private SellerRepository sellerRepository;
@@ -31,7 +35,8 @@ public class SellerServiceImpl implements SellerService{
         }
 
         User user = userRepository.findById(sellerRequestDTO.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sellerRequestDTO.getUserId()));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User not found with ID: " + sellerRequestDTO.getUserId()));
 
         if (sellerRepository.existsByUserId(user.getUserId())) {
             throw new EntityExistsException("This user is already registered as a seller.");
@@ -46,7 +51,27 @@ public class SellerServiceImpl implements SellerService{
 
     @Override
     public Seller getSellerById(Integer sellerId) {
-        return sellerRepository.findById(sellerId).orElseThrow(()-> new RuntimeException("Product not found: "+sellerId) );
+        return sellerRepository.findById(sellerId)
+                .orElseThrow(() -> new EntityNotFoundException("Seller not found: " + sellerId));
     }
-    
+
+    @Override
+    public Page<Seller> getSellers(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return sellerRepository.findAll(null, pageable);
+    }
+
+    @Override
+    @Transactional
+    public Seller updateSeller(Integer sellerId, SellerRequestDTO sellerRequestDTO) {
+        return sellerRepository.findById(sellerId)
+                .map(existing -> {
+                    modelMapper.map(sellerRequestDTO, existing);
+                    return sellerRepository.save(existing);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Seller not found: " + sellerId));
+    }
 }

@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.Data;
 
@@ -29,10 +28,12 @@ public class Seller {
     private Integer cityId;
     @Column(name = "rate")
     private Double rate;
+    @Column(name = "rate_count")
+    private Integer rateCount;
     @Column(name = "created")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
     @Column(name = "updated")
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
     @Column(name = "sold_items")
     private Integer soldItems;
     @Column(name = "verified")
@@ -41,12 +42,7 @@ public class Seller {
     private UUID userId;
     @Column(name = "profile_img")
     private String profileImg;
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
+   
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
