@@ -37,7 +37,7 @@ public class SellerController {
     @GetMapping
     public ResponseEntity<ApiResponseDTO> getSellers(@RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(0) int size, @RequestParam(defaultValue = "rate") String sortBy,
-            @Pattern(regexp = "asc|desc") String direction) {
+            @RequestParam(defaultValue = "asc") @Pattern(regexp = "asc|desc") String direction) {
         return ResponseEntity
                 .ok(new ApiResponseDTO(sellerService.getSellers(page, size, sortBy, direction), HttpStatus.OK));
     }
