@@ -26,20 +26,22 @@ public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
-    private ModelMapper modelMapper = new ModelMapper();
-
+    private final ModelMapper modelMapper;
+    
     @Override
     public Page<Product> getProducts(String query,
             Double minPrice,
             Double maxPrice,
             Integer categoryId,
+            Boolean canceled,
             int page,
             int size,
             String sortBy,
             String direction) {
         Specification<Product> spec = Specification.allOf(ProductSpecification.hasNameOrDescriptionLike(query))
                 .and(ProductSpecification.priceBetween(minPrice, maxPrice))
-                .and(ProductSpecification.hasCategory(categoryId));
+                .and(ProductSpecification.hasCategory(categoryId))
+                .and(ProductSpecification.activeEquals(canceled));
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -76,6 +78,15 @@ public class ProductServiceImpl implements ProductService{
     public Page<Review> getReviwsByProductId(UUID prodcutId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("likes"));
         return reviewRepository.findByProductId(prodcutId,pageable);
+    }
+
+    @Override
+    public Boolean deleteProductById(UUID productId) {
+        return productRepository.findById(productId).map(existing ->{
+            existing.setCanceled(true);
+            productRepository.save(existing);
+            return true;
+        }).orElseThrow(() -> new EntityNotFoundException("Product not found: " + productId));
     }
 
 }

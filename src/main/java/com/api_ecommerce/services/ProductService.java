@@ -12,6 +12,7 @@ public interface ProductService {
             Double minPrice,
             Double maxPrice,
             Integer categoryId,
+            Boolean canceled,
             int page,
             int size,
             String sortBy,
@@ -20,4 +21,5 @@ public interface ProductService {
     public Boolean saveProduct(ProductRequestDTO productRequestDTO);
     public Boolean updateProduct(UUID productId,ProductRequestDTO productRequestDTO);
     public Page<Review> getReviwsByProductId(UUID prodcutId, int page, int size);
+    public Boolean deleteProductById(UUID productId);
 }

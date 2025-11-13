@@ -3,6 +3,7 @@ package com.api_ecommerce.controllers;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +37,9 @@ public class ProductController {
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size,
             @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "asc") @Pattern(regexp = "asc|desc") String direction) {
-        return ResponseEntity.ok(new ApiResponseDTO(productService.getProducts(q, minPrice, maxPrice, categoryId, page, size, sortBy, direction),HttpStatus.OK));
+            @RequestParam(defaultValue = "asc") @Pattern(regexp = "asc|desc") String direction,
+            @RequestParam(defaultValue = "false") Boolean canceled) {
+        return ResponseEntity.ok(new ApiResponseDTO(productService.getProducts(q, minPrice, maxPrice, categoryId, canceled, page, size, sortBy, direction),HttpStatus.OK));
     }
 
     @GetMapping("{productId}")
@@ -58,6 +60,11 @@ public class ProductController {
     @GetMapping("{productId}/reviews")
     public ResponseEntity<ApiResponseDTO> getProductReviews(@PathVariable("productId") UUID productId,@RequestParam(defaultValue = "0") @Min(0) int page,@RequestParam(defaultValue = "10") @Min(1) @Max(100) int size){
         return ResponseEntity.ok(new ApiResponseDTO(productService.getReviwsByProductId(productId, page, size),HttpStatus.OK));
+    }
+
+    @DeleteMapping("{productId}")
+    public ResponseEntity<ApiResponseDTO> deleteProduct(@PathVariable("productId") UUID productId){
+        return ResponseEntity.ok(new ApiResponseDTO(productService.deleteProductById(productId),HttpStatus.OK));
     }
     
 }

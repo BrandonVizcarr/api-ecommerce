@@ -1,7 +1,6 @@
 package com.api_ecommerce.services.implementation;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,16 +15,15 @@ import com.api_ecommerce.services.SellerService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class SellerServiceImpl implements SellerService {
 
-    @Autowired
-    private SellerRepository sellerRepository;
-    @Autowired
-    private UserRepository userRepository;
-
-    private ModelMapper modelMapper = new ModelMapper();
+    private final SellerRepository sellerRepository;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     @Transactional

@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 public class SellerRequestDTO {
-    private Integer sellerId;
     @Size(min = 4, message = "Name must be at least 4 characters long")
     @NotBlank(message = "Name is required")
     private String name;

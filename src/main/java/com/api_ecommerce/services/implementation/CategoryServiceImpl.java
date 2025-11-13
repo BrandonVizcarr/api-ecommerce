@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class CategoryServiceImpl implements CategoryService{
 
     private final CategoryRepository categoryRepository;
-    private ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
 
     @Override
     public Category saveCategory(CategoryRequestDTO categoryRequestDTO) {
