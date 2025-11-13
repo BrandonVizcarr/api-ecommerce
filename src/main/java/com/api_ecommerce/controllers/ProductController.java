@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.api_ecommerce.dto.request.ProductRequestDTO;
+import com.api_ecommerce.dto.request.RateRequestDTO;
 import com.api_ecommerce.dto.response.ApiResponseDTO;
 import com.api_ecommerce.services.ProductService;
 import jakarta.validation.Valid;
@@ -65,6 +67,11 @@ public class ProductController {
     @DeleteMapping("{productId}")
     public ResponseEntity<ApiResponseDTO> deleteProduct(@PathVariable("productId") UUID productId){
         return ResponseEntity.ok(new ApiResponseDTO(productService.deleteProductById(productId),HttpStatus.OK));
+    }
+
+    @PatchMapping("{productId}")
+    public ResponseEntity<ApiResponseDTO> pacthProductRate(@PathVariable("productId") UUID productId,@Valid @RequestBody RateRequestDTO rate){
+        return ResponseEntity.ok(new ApiResponseDTO(productService.patchProductRate(productId, rate),HttpStatus.OK));
     }
     
 }

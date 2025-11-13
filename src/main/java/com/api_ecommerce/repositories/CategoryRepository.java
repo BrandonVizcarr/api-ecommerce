@@ -10,6 +10,6 @@ import com.api_ecommerce.entities.Category;
 
 public interface CategoryRepository extends JpaRepository<Category,Integer>{
     Optional<Category> findByName(String name);
-    @Query("SELECT c FROM categories c WHERE c.parentId IS NULL ORDER BY c.order")
+    @Query("SELECT c FROM categories c WHERE c.parentId IS NULL and c.canceled = false ORDER BY c.order")
     List<Category> findAllParentCategories();
 }

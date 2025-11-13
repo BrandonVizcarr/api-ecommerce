@@ -35,7 +35,6 @@ public class ProductSpecification {
     }
     public static Specification<Product> activeEquals(Boolean canceled) {
         return (root, query, cb) -> {
-            if (canceled) return cb.conjunction();
             return cb.equal(root.get("canceled"), canceled);
         };
     }
