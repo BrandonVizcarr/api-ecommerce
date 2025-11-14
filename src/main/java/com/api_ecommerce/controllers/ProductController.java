@@ -44,7 +44,7 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponseDTO(productService.getProducts(q, minPrice, maxPrice, categoryId, canceled, page, size, sortBy, direction),HttpStatus.OK));
     }
 
-    @GetMapping("{productId}")
+    @GetMapping("/{productId}")
     public ResponseEntity<ApiResponseDTO> getProductById(@PathVariable("productId") UUID productId){
         return ResponseEntity.ok(new ApiResponseDTO(productService.getProductById(productId),HttpStatus.OK));
     }
@@ -54,7 +54,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDTO(productService.saveProduct(productRequestDTO),HttpStatus.CREATED));
     }
 
-    @PutMapping("{productId}")
+    @PutMapping("/{productId}")
     public ResponseEntity<ApiResponseDTO> updateProduct(@PathVariable("productId") UUID productId,@RequestBody ProductRequestDTO productRequestDTO){
         return ResponseEntity.ok(new ApiResponseDTO(productService.updateProduct(productId,productRequestDTO),HttpStatus.OK));
     }
@@ -64,12 +64,12 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponseDTO(productService.getReviwsByProductId(productId, page, size),HttpStatus.OK));
     }
 
-    @DeleteMapping("{productId}")
+    @DeleteMapping("/{productId}")
     public ResponseEntity<ApiResponseDTO> deleteProduct(@PathVariable("productId") UUID productId){
         return ResponseEntity.ok(new ApiResponseDTO(productService.deleteProductById(productId),HttpStatus.OK));
     }
 
-    @PatchMapping("{productId}")
+    @PatchMapping("/{productId}")
     public ResponseEntity<ApiResponseDTO> pacthProductRate(@PathVariable("productId") UUID productId,@Valid @RequestBody RateRequestDTO rate){
         return ResponseEntity.ok(new ApiResponseDTO(productService.patchProductRate(productId, rate),HttpStatus.OK));
     }

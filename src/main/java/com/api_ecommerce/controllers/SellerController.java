@@ -2,6 +2,7 @@ package com.api_ecommerce.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +31,7 @@ public class SellerController {
     }
 
     @GetMapping("/{sellerId}")
-    public ResponseEntity<ApiResponseDTO> getSellerById(@PathVariable("sellerId") Integer sellerId){
+    public ResponseEntity<ApiResponseDTO> getSellerById(@PathVariable("sellerId") Long sellerId){
         return ResponseEntity.ok(new ApiResponseDTO(sellerService.getSellerById(sellerId),HttpStatus.OK));
     }
 
@@ -40,6 +41,11 @@ public class SellerController {
             @RequestParam(defaultValue = "asc") @Pattern(regexp = "asc|desc") String direction) {
         return ResponseEntity
                 .ok(new ApiResponseDTO(sellerService.getSellers(page, size, sortBy, direction), HttpStatus.OK));
+    }
+    
+    @DeleteMapping("/{sellerId}")
+    public ResponseEntity<ApiResponseDTO> deleteSeller(@PathVariable("sellerId") Long sellerId){
+        return ResponseEntity.ok(new ApiResponseDTO(sellerService.deleteSeller(sellerId),HttpStatus.OK));
     }
 
 }

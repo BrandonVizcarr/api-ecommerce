@@ -1,14 +1,19 @@
 package com.api_ecommerce.services.implementation;
 
+import java.util.UUID;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import com.api_ecommerce.dto.request.RateRequestDTO;
 import com.api_ecommerce.dto.request.SellerRequestDTO;
+import com.api_ecommerce.entities.Rating;
 import com.api_ecommerce.entities.Seller;
 import com.api_ecommerce.entities.User;
+import com.api_ecommerce.repositories.RatingRepository;
 import com.api_ecommerce.repositories.SellerRepository;
 import com.api_ecommerce.repositories.UserRepository;
 import com.api_ecommerce.services.SellerService;
@@ -24,6 +29,7 @@ public class SellerServiceImpl implements SellerService {
     private final SellerRepository sellerRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final RatingRepository ratingRepository;
 
     @Override
     @Transactional
@@ -48,7 +54,7 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Seller getSellerById(Integer sellerId) {
+    public Seller getSellerById(Long sellerId) {
         return sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new EntityNotFoundException("Seller not found: " + sellerId));
     }
@@ -64,7 +70,7 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     @Transactional
-    public Seller updateSeller(Integer sellerId, SellerRequestDTO sellerRequestDTO) {
+    public Seller updateSeller(Long sellerId, SellerRequestDTO sellerRequestDTO) {
         return sellerRepository.findById(sellerId)
                 .map(existing -> {
                     modelMapper.map(sellerRequestDTO, existing);
@@ -72,4 +78,50 @@ public class SellerServiceImpl implements SellerService {
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Seller not found: " + sellerId));
     }
+
+    @Override
+    @Transactional
+    public Seller patchSeller(Long sellerId, RateRequestDTO rateRequestDTO) {
+        UUID userId = rateRequestDTO.getUserId();
+        Double rateValue = rateRequestDTO.getRate();
+
+        Seller seller = sellerRepository.findById(sellerId)
+                .orElseThrow(() -> new EntityNotFoundException("Seller not found: " + sellerId));
+
+        boolean exists = ratingRepository.existsByUserIdAndTargetTypeAndTargetId(
+                userId, "SELLER", sellerId.toString());
+
+        if (exists) {
+            throw new IllegalStateException("User has already rated this seller");
+        }
+
+        Rating rating = new Rating();
+        rating.setUserId(userId);
+        rating.setTargetType("SELLER");
+        rating.setTargetId(sellerId.toString());
+        rating.setValue(rateValue);
+        ratingRepository.save(rating);
+
+        int count = seller.getRateCount() != null ? seller.getRateCount() : 0;
+        double sum = seller.getRate() * count;
+
+        count++;
+        sum += rateValue;
+
+        seller.setRate(sum / count);
+        seller.setRateCount(count);
+
+        return sellerRepository.save(seller);
+    }
+
+    @Override
+    public Boolean deleteSeller(Long sellerId) {
+        return sellerRepository.findById(sellerId).map(
+            existing->{
+                sellerRepository.deleteById(sellerId);
+                return true;
+            }
+        ).orElseThrow(()-> new EntityNotFoundException("Seller not found: "+sellerId));
+    }
+
 }

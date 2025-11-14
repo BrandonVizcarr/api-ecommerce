@@ -23,6 +23,6 @@ public class ProductRequestDTO {
     private Integer categoryId;
     private Integer subCategoryId;
     @NotNull(message = "Seller is required")
-    private Integer sellerId;
+    private Long sellerId;
     private Double rate;
 }

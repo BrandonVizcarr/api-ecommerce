@@ -54,4 +54,12 @@ public class UserServiceImpl implements UserService{
         return dtoPage;
     }
 
+    @Override
+    public Boolean deleteUser(UUID userId) {
+        return userRepository.findById(userId).map(existing->{
+            userRepository.deleteById(userId);
+            return true;
+        }).orElseThrow(() -> new EntityNotFoundException("User not found: "+userId));
+    }
+
 }

@@ -3,6 +3,7 @@ package com.api_ecommerce.controllers;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,11 @@ public class UserController {
     public ResponseEntity<ApiResponseDTO> getUsers(@RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size){
         return ResponseEntity.ok(new ApiResponseDTO(userService.getUsers(page, size),HttpStatus.OK));
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ApiResponseDTO> deleteUser(@PathVariable("userId") UUID userId){
+        return ResponseEntity.ok(new ApiResponseDTO(userService.deleteUser(userId),HttpStatus.OK));
     }
 
 }

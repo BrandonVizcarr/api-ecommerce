@@ -3,17 +3,10 @@ package com.api_ecommerce.repositories;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.api_ecommerce.entities.Review;
 import com.api_ecommerce.entities.ReviewReaction;
 
-public interface ReviewRepository extends JpaRepository<Review,Long>{
-
-    Page<Review> findByProductId(UUID productId,Pageable pageable);
+public interface ReactionRepository extends JpaRepository<ReviewReaction,Long>{
     Optional<ReviewReaction> findByUserIdAndReviewId(UUID userId, Long reviewId);
-
-
 }

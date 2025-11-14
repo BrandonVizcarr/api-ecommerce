@@ -49,7 +49,7 @@ public class Product {
     @Column(name = "subcategory_id")
     private Integer subCategoryId;
     @Column(name = "seller_id", nullable = false)
-    private Integer sellerId;
+    private Long sellerId;
     @Column(name = "brand_id")
     private Integer brandId;
     @ManyToOne(fetch = FetchType.EAGER)
