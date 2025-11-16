@@ -22,7 +22,7 @@ public class ApiEcommerceApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200", "https://tudominiofrontend.com")
+                        .allowedOrigins("http://localhost:4200", "https://brandonviz.dev")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true)
