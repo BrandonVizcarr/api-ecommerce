@@ -22,7 +22,7 @@ public class ApiEcommerceApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200", "https://brandonviz.dev","https://brandonviz.dev/api-ecommerce/api/v1/swagger-ui/index.html#/")
+                        .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true)
