@@ -25,6 +25,10 @@ public class Category {
     private Integer order;
     @Column(name = "canceled")
     private Boolean canceled = false;
+    @Column(name = "icon")
+    private String icon;
+    @Column(name = "des_url")
+    private String desUrl;
     @Column(name = "parent_id")
     private Integer parentId;
     @OneToMany(fetch = FetchType.LAZY)
