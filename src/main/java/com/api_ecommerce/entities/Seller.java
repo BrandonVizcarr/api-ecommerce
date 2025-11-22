@@ -37,7 +37,7 @@ public class Seller {
     @Column(name = "sold_items")
     private Integer soldItems;
     @Column(name = "verified")
-    private Boolean verified;
+    private Boolean verified=false;
     @Column(name = "user_Id")
     private UUID userId;
     @Column(name = "profile_img")
