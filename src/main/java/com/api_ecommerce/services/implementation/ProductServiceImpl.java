@@ -36,6 +36,7 @@ public class ProductServiceImpl implements ProductService{
             Double minPrice,
             Double maxPrice,
             Integer categoryId,
+            Integer subCategoryId,
             Boolean canceled,
             int page,
             int size,
@@ -44,7 +45,8 @@ public class ProductServiceImpl implements ProductService{
         Specification<Product> spec = Specification.allOf(ProductSpecification.hasNameOrDescriptionLike(query))
                 .and(ProductSpecification.priceBetween(minPrice, maxPrice))
                 .and(ProductSpecification.hasCategory(categoryId))
-                .and(ProductSpecification.activeEquals(canceled));
+                .and(ProductSpecification.activeEquals(canceled))
+                .and(ProductSpecification.hasSubCategory(subCategoryId));
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();

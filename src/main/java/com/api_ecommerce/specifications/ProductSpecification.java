@@ -33,6 +33,14 @@ public class ProductSpecification {
             return cb.equal(root.get("categoryId"), categoryId);
         };
     }
+
+    public static Specification<Product> hasSubCategory(Integer subCategoryId){
+        return (root, query, cb)->{
+            if(subCategoryId == null) return cb.conjunction();
+            return cb.equal(root.get("subCategoryId"), subCategoryId);
+        };
+    }
+
     public static Specification<Product> activeEquals(Boolean canceled) {
         return (root, query, cb) -> {
             return cb.equal(root.get("canceled"), canceled);

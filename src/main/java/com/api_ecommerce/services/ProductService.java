@@ -13,6 +13,7 @@ public interface ProductService {
             Double minPrice,
             Double maxPrice,
             Integer categoryId,
+            Integer subCategoryId,
             Boolean canceled,
             int page,
             int size,
