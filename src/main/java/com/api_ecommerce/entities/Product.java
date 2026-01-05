@@ -60,6 +60,8 @@ public class Product {
     private Boolean freeDelivery;
     @Column(name = "fast_delivery")
     private Boolean fastDelivery;
+    @Column(name = "sold_count")
+    private Integer soldCount;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "seller_Id", nullable = false, updatable = false, insertable = false) 
     private Seller seller;
