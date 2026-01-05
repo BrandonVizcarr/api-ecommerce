@@ -54,6 +54,12 @@ public class Product {
     private Long sellerId;
     @Column(name = "brand_id")
     private Integer brandId;
+    @Column(name = "desc_condition")
+    private String descCondition;
+    @Column(name = "free_delivery")
+    private Boolean freeDelivery;
+    @Column(name = "fast_delivery")
+    private Boolean fastDelivery;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "seller_Id", nullable = false, updatable = false, insertable = false) 
     private Seller seller;
