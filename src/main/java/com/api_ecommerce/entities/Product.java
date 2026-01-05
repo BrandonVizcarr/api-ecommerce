@@ -32,6 +32,8 @@ public class Product {
     private Integer rateCount;
     @Column(name = "price", nullable = false)
     private BigDecimal price;
+    @Column(name = "previous_price")
+    private BigDecimal previousPrice;
     @Column(name = "discount")
     private BigDecimal discount;
     @Column(name = "stock", nullable = false)
