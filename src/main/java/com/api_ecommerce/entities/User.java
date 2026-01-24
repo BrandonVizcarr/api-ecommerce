@@ -1,6 +1,9 @@
 package com.api_ecommerce.entities;
 
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,12 +23,15 @@ public class User {
     private String name;
     @Column(name = "lastname")
     private String lastName;
+    @JsonIgnore
     @Column(name = "email")
     private String email;
+    @JsonIgnore
     @Column(name = "pass")
     private String password;
+    @JsonIgnore
     @Column(name = "rol_id")
-    private Integer role=1;
+    private Integer role = 1;
     @Column(name = "profile_img")
     private String profileImg;
 }
