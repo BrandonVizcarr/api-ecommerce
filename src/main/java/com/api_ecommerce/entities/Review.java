@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Data
@@ -30,6 +31,7 @@ public class Review {
     private UUID productId;
     @Column(name = "media")
     private List<String> media;
-    @JoinColumn(name = "user_id")
+    @OneToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 }
